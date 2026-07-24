@@ -93,7 +93,7 @@ export const SOURCE_DOCS = {
 };
 
 // Return fields — the core dataset
-// states: "ai_suggested" | "verified" | "flagged" | "changed_by_human" | "manual"
+// states: "ai_suggested" | "verified" | "flagged" | "manually_changed"
 export const FIELDS = {
   r1: [
     {
@@ -151,7 +151,7 @@ export const FIELDS = {
       source_page: 1,
       source_location: "Box 1a",
       confidence: 0.93,
-      state: "changed_by_human",
+      state: "manually_changed",
       transformation: null,
     },
     {
@@ -385,16 +385,17 @@ export const BOUNDING_BOXES = {
 };
 
 // Status display config — maps state keys to UI labels and colors
+// ponytail: hex values (not CSS vars) so they work in JS inline style strings
 export const STATE_CONFIG = {
-  ai_suggested: { label: "AI Suggested", color: "var(--accent)", icon: "✦" },
-  verified: { label: "Verified", color: "var(--success)", icon: "✓" },
-  flagged: { label: "Needs Review", color: "var(--warning)", icon: "⚠" },
-  manual: { label: "Manual Entry", color: "var(--muted)", icon: "✎" },
+  ai_suggested: { label: "AI Suggested", color: "#3b6fff", icon: "✦" },
+  verified: { label: "Verified", color: "#2da06a", icon: "✓" },
+  flagged: { label: "Needs Review", color: "#cc8f20", icon: "⚠" },
+  manually_changed: { label: "Manually Changed", color: "#6b7280", icon: "✎" },
 };
 
 export const RETURN_STATUS_CONFIG = {
-  ai_review: { label: "AI Review", color: "var(--accent)" },
-  in_progress: { label: "In Progress", color: "var(--warning)" },
-  complete: { label: "Complete", color: "var(--success)" },
-  pending_client: { label: "Pending Client", color: "var(--muted)" },
+  ai_review: { label: "AI Review", color: "#3b6fff" },
+  in_progress: { label: "In Progress", color: "#cc8f20" },
+  complete: { label: "Complete", color: "#2da06a" },
+  pending_client: { label: "Pending Client", color: "#6b7280" },
 };

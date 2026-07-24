@@ -15,7 +15,7 @@ The core interaction:
 3. see the AI's reasoning, confidence, and evidence
 4. accept or correct it without breaking the audit trail.
 
-## Component Status
+## What's genuinely wired up vs. simulated
 
 | Component                                          | Status                                     |
 | -------------------------------------------------- | ------------------------------------------ |
