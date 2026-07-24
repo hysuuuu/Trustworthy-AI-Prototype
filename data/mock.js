@@ -387,15 +387,16 @@ export const BOUNDING_BOXES = {
 // Status display config — maps state keys to UI labels and colors
 // ponytail: hex values (not CSS vars) so they work in JS inline style strings
 export const STATE_CONFIG = {
-  ai_suggested: { label: "AI Suggested", color: "#3b6fff", icon: "✦" },
-  verified: { label: "Verified", color: "#2da06a", icon: "✓" },
-  flagged: { label: "Needs Review", color: "#cc8f20", icon: "⚠" },
-  manually_changed: { label: "Manually Changed", color: "#6b7280", icon: "✎" },
+  ai_suggested:    { label: 'AI Suggested',      color: '#2563eb', icon: '✦' }, /* Blue to separate from verified */
+  verified:        { label: 'Verified',           color: '#059669', icon: '✓' }, /* GreenGrowth brand green */
+  flagged:         { label: 'Needs Review',       color: '#d97706', icon: '⚠' },
+  manually_changed:{ label: 'Manually Changed',  color: '#4b5563', icon: '✎' },
+  manual:          { label: 'Manual Entry',       color: '#4b5563', icon: '✎' },
 };
 
 export const RETURN_STATUS_CONFIG = {
-  ai_review: { label: "AI Review", color: "#3b6fff" },
-  in_progress: { label: "In Progress", color: "#cc8f20" },
-  complete: { label: "Complete", color: "#2da06a" },
-  pending_client: { label: "Pending Client", color: "#6b7280" },
+  ai_review:      { label: 'AI Review',      color: '#2563eb' },
+  in_progress:    { label: 'In Progress',    color: '#d97706' },
+  complete:       { label: 'Complete',       color: '#059669' },
+  pending_client: { label: 'Pending Client', color: '#4b5563' },
 };

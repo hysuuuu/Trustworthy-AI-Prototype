@@ -237,29 +237,21 @@ function renderFieldsPanel(rid) {
             ? `<span class="source-badge">${doc.label} · ${f.source_location} · p.${f.source_page}</span>`
             : `<span class="text-3">${f.source_location}</span>`;
 
-          const canAccept = !["verified", "manually_changed"].includes(f.state);
-          const actions = isEditing
-            ? `<button class="btn-sm btn-primary" data-action="save-field" data-id="${f.id}">Save</button>
-           <button class="btn-sm btn-ghost" data-action="cancel-edit">Cancel</button>`
-            : `${canAccept ? `<button class="btn-sm btn-ghost" data-action="accept-field" data-id="${f.id}">Accept</button>` : ""}
-           <button class="btn-sm btn-ghost" data-action="edit-field" data-id="${f.id}">Edit</button>`;
-
           return `
-        <tr class="field-row${isSelected ? " selected" : ""}${f.state === "flagged" ? " flagged" : ""}"
+        <tr class="field-row${isSelected ? ' selected' : ''}${f.state === 'flagged' ? ' flagged' : ''}"
             data-action="select-field" data-id="${f.id}">
           <td class="col-line mono text-3">${f.line}</td>
           <td class="field-label">${f.label}</td>
           <td class="col-value">${valueCell}</td>
           <td>${sourceCell}</td>
-          <td class="col-conf">${doc ? confBar(f.confidence) : ""}</td>
+          <td class="col-conf">${doc ? confBar(f.confidence) : ''}</td>
           <td>${badge(f)}</td>
-          <td class="col-actions" onclick="event.stopPropagation()">${actions}</td>
         </tr>`;
         })
-        .join("");
+        .join('');
 
       return `<tbody>
-      <tr class="section-row"><td colspan="7">${section}</td></tr>
+      <tr class="section-row"><td colspan="6">${section}</td></tr>
       ${fieldRows}
     </tbody>`;
     })
@@ -281,7 +273,6 @@ function renderFieldsPanel(rid) {
               <th>Source</th>
               <th class="col-conf">Confidence</th>
               <th>Status</th>
-              <th class="col-actions">Actions</th>
             </tr>
           </thead>
           ${tbody}
@@ -406,7 +397,7 @@ function renderInsightPanel(rid) {
       insight.uncertainty
         ? `
     <div class="insight-section">
-      <div class="insight-section-label">Uncertainty</div>
+      <div class="insight-section-label-uncertainty">Uncertainty</div>
       <div class="insight-uncertainty">${insight.uncertainty}</div>
     </div>`
         : ""
@@ -447,6 +438,15 @@ function renderInsightPanel(rid) {
         ${flagBanner}
         ${insightBody}
       </div>
+      <div class="insight-actions">
+        ${state.editingFieldId === field.id
+          ? `<button class="btn-action btn-primary" data-action="save-field" data-id="${field.id}">Save changes</button>
+             <button class="btn-action btn-ghost" data-action="cancel-edit">Cancel</button>`
+          : `${!['verified', 'manually_changed'].includes(field.state)
+              ? `<button class="btn-action btn-accept" data-action="accept-field" data-id="${field.id}">✓ Accept</button>` : ''}
+             <button class="btn-action btn-ghost" data-action="edit-field" data-id="${field.id}">✎ Edit value</button>`
+        }
+      </div>
     </div>`;
 }
 
@@ -456,6 +456,7 @@ function renderReview(rid) {
   const ret = RETURNS.find((r) => r.id === rid);
   if (!ret) return '<div class="p14 text-3">Return not found.</div>';
   const sc = RETURN_STATUS_CONFIG[ret.status];
+  const hasSel = !!state.selectedFieldId;
 
   return `
     <header class="header">
@@ -468,14 +469,14 @@ function renderReview(rid) {
         <span class="review-client-name">${ret.client}</span>
         <span class="text-3">·</span>
         <span class="text-2">${ret.tax_year} · ${ret.filing_status}</span>
-        <span class="badge" style="color:${sc.color};border-color:${alpha(sc.color, "28")};background:${alpha(sc.color, "12")}">${sc.label}</span>
+        <span class="badge" style="color:${sc.color};border-color:${alpha(sc.color, '28')};background:${alpha(sc.color, '12')}">${sc.label}</span>
       </div>
       <div class="review-meta">Preparer: ${ret.preparer} · Due ${ret.due_date}</div>
     </div>
-    <div class="review-grid">
+    <div class="review-grid ${hasSel ? 'has-selection' : ''}">
       ${renderFieldsPanel(rid)}
-      ${renderDocPanel(rid)}
-      ${renderInsightPanel(rid)}
+      ${hasSel ? renderDocPanel(rid) : ''}
+      ${hasSel ? renderInsightPanel(rid) : ''}
     </div>`;
 }
 
@@ -516,9 +517,10 @@ document.getElementById("app").addEventListener("click", (e) => {
     state.returnId = null;
     state.selectedFieldId = null;
     state.editingFieldId = null;
-  } else if (action === "select-field") {
+  } else if (action === 'select-field') {
     if (state.editingFieldId) return; // lock during edit
-    state.selectedFieldId = id;
+    // toggle: clicking the active row deselects and collapses side panels
+    state.selectedFieldId = state.selectedFieldId === id ? null : id;
   } else if (action === "accept-field") {
     const f = getField(state.returnId, id);
     if (f) f.state = "verified";
