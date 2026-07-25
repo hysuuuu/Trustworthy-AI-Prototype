@@ -3,8 +3,10 @@
 ## Workflow
 
 1. In the Returns dashboard, select a specific client to enter the client's dashboard.
-2. In the client's dashboard, select a specific field to review the source document and AI analysis.
-3. Choose "Accept" to accept the AI analysis or "Edit value" to manually edit.
+2. In the client's dashboard, use the top-left dropdown to set the overall return status (e.g., In Progress, Complete).
+3. Use the search bar and status filter in the Fields panel to quickly find specific line items or isolate "Needs Review" fields.
+4. Select a specific field to review the source document and AI analysis.
+5. Choose "Accept" to accept the AI analysis or "Edit value" to manually edit.
 
 ## Design
 
@@ -18,7 +20,7 @@ The panel's **"Suggested action"** section shows the AI's recommendation along w
 
 ### 3. What evidence supports it
 
-The **Source Document panel** (middle column) renders a mock version of the originating document, such as a W-2, 1099-INT, 1099-DIV, or 1099-B. The exact row the AI read is highlighted in amber. The panel also lists the specific box number, page, and issuer. For calculated fields like standard deduction and taxable income, the **"Transformation"** section explains the arithmetic step by step.
+The **Source Document panel** (middle column) renders a mock version of the originating document, such as a W-2, 1099-INT, 1099-DIV, or 1099-B. The exact row the AI read is highlighted in amber. The panel also lists the specific box number, page, and issuer. **In the AI Analysis panel, clicking the "Source" chip triggers a scroll and a visual flash on the row in the document panel**. For calculated fields like standard deduction and taxable income, the **"Transformation"** section explains the arithmetic step by step.
 
 ### 4. What uncertainty exists
 

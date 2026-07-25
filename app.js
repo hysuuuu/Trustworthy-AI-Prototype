@@ -20,6 +20,8 @@ const state = {
   returnId: null,
   selectedFieldId: null,
   editingFieldId: null,
+  fieldSearch: "",
+  fieldFilter: "all",
 };
 
 // ── Fake document layouts ─────────────────────────────────────────────────
@@ -169,8 +171,8 @@ function renderDashboard() {
         <td class="client-name">${r.client}</td>
         <td class="text-2">${r.filing_status}</td>
         <td><span class="badge" style="color:${sc.color};border-color:${alpha(sc.color, "28")};background:${alpha(sc.color, "12")}">${sc.label}</span></td>
-        <td class="num">${flagCell}</td>
-        <td class="num">${reviewCell}</td>
+        <td>${flagCell}</td>
+        <td>${reviewCell}</td>
         <td class="text-2">${r.preparer}</td>
         <td class="text-2 mono">${r.due_date}</td>
       </tr>`;
@@ -198,8 +200,8 @@ function renderDashboard() {
             <th>Client</th>
             <th>Filing Status</th>
             <th>Status</th>
-            <th class="num">Flags</th>
-            <th class="num">Awaiting Review</th>
+            <th>Flags</th>
+            <th>Awaiting Review</th>
             <th>Preparer</th>
             <th>Due</th>
           </tr>
@@ -212,11 +214,20 @@ function renderDashboard() {
 // ── Fields panel ──────────────────────────────────────────────────────────
 
 function renderFieldsPanel(rid) {
-  const fields = getFields(rid);
-  const grouped = groupBy(fields, "section");
-  const flagged = fields.filter((f) => f.state === "flagged").length;
+  const allFields = getFields(rid);
+  const flagged = allFields.filter((f) => f.state === "flagged").length;
   const sel = state.selectedFieldId;
   const editing = state.editingFieldId;
+
+  // Apply search + filter
+  const q = state.fieldSearch.toLowerCase();
+  const filtered = allFields.filter((f) => {
+    const matchesSearch = !q || f.label.toLowerCase().includes(q);
+    const matchesFilter = state.fieldFilter === "all" || f.state === state.fieldFilter;
+    return matchesSearch && matchesFilter;
+  });
+
+  const grouped = groupBy(filtered, "section");
 
   const tbody = Object.entries(grouped)
     .map(([section, sFields]) => {
@@ -257,11 +268,33 @@ function renderFieldsPanel(rid) {
     })
     .join("");
 
+  const emptyRow = filtered.length === 0
+    ? `<tbody><tr><td colspan="6" class="fields-empty">No fields match your search.</td></tr></tbody>`
+    : tbody;
+
+  const filterOptions = [
+    ["all", "All"],
+    ["ai_suggested", "AI Suggested"],
+    ["flagged", "Needs Review"],
+    ["verified", "Verified"],
+    ["adjusted", "Adjusted"],
+  ].map(([val, label]) =>
+    `<option value="${val}"${state.fieldFilter === val ? ' selected' : ''}>${label}</option>`
+  ).join("");
+
   return `
     <div class="panel fields-panel">
       <div class="panel-header">
         <span class="panel-title">Return Fields</span>
-        <span class="panel-sub">${fields.length} fields · ${flagged} flagged</span>
+        <span class="panel-sub">${allFields.length} fields · ${flagged} flagged</span>
+      </div>
+      <div class="fields-toolbar">
+        <div class="fields-search-wrap">
+          <span class="search-icon">⌕</span>
+          <input class="fields-search" id="field-search-input" type="text"
+            placeholder="Search fields…" value="${state.fieldSearch}" />
+        </div>
+        <select class="fields-filter" id="field-filter-select">${filterOptions}</select>
       </div>
       <div class="fields-scroll">
         <table class="fields-table">
@@ -473,7 +506,9 @@ function renderReview(rid) {
         <span class="review-client-name">${ret.client}</span>
         <span class="text-3">·</span>
         <span class="text-2">${ret.tax_year} · ${ret.filing_status}</span>
-        <span class="badge" style="color:${sc.color};border-color:${alpha(sc.color, "28")};background:${alpha(sc.color, "12")}">${sc.label}</span>
+        <select class="return-status-select" id="return-status-select" data-id="${ret.id}" style="background-color:${sc.color}">
+          ${Object.entries(RETURN_STATUS_CONFIG).map(([k, v]) => `<option value="${k}"${k === ret.status ? ' selected' : ''}>${v.label}</option>`).join("")}
+        </select>
       </div>
       <div class="review-meta">Preparer: ${ret.preparer} · Due ${ret.due_date}</div>
     </div>
@@ -569,6 +604,32 @@ document.getElementById("app").addEventListener("click", (e) => {
   }
 
   render();
+});
+
+// ── Search & filter (delegated, no re-render loop) ────────────────────────
+
+document.getElementById("app").addEventListener("input", (e) => {
+  if (e.target.id === "field-search-input") {
+    state.fieldSearch = e.target.value;
+    render();
+    // Restore focus + cursor after render
+    const input = document.getElementById("field-search-input");
+    if (input) { input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
+  }
+});
+
+document.getElementById("app").addEventListener("change", (e) => {
+  if (e.target.id === "field-filter-select") {
+    state.fieldFilter = e.target.value;
+    render();
+  } else if (e.target.id === "return-status-select") {
+    const rid = e.target.dataset.id;
+    const ret = RETURNS.find((r) => r.id === rid);
+    if (ret) {
+      ret.status = e.target.value;
+      render();
+    }
+  }
 });
 
 // ── Init ──────────────────────────────────────────────────────────────────

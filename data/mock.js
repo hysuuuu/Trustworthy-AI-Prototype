@@ -403,8 +403,8 @@ export const STATE_CONFIG = {
 };
 
 export const RETURN_STATUS_CONFIG = {
-  ai_review: { label: "AI Review", color: "#2563eb" },
-  in_progress: { label: "In Progress", color: "#d97706" },
-  complete: { label: "Complete", color: "#059669" },
-  pending_client: { label: "Pending Client", color: "#4b5563" },
+  ai_review: { label: "AI Review", color: "#4f78d6" },
+  in_progress: { label: "In Progress", color: "#cf8c36" },
+  complete: { label: "Complete", color: "#2d9c74" },
+  pending_client: { label: "Pending Client", color: "#656c78" },
 };
