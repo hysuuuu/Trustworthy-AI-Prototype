@@ -188,6 +188,7 @@ export const FIELDS = {
     {
       id: "f_std_deduction",
       section: "Deductions",
+      is_calculated: true,
       label: "Standard Deduction",
       line: "12",
       value: "$14,600.00",
@@ -203,6 +204,7 @@ export const FIELDS = {
     {
       id: "f_taxable_income",
       section: "Deductions",
+      is_calculated: true,
       label: "Taxable Income",
       line: "15",
       value: "$82,390.00",
@@ -218,6 +220,7 @@ export const FIELDS = {
     {
       id: "f_tax",
       section: "Tax & Credits",
+      is_calculated: true,
       label: "Tax (from tax table)",
       line: "16",
       value: "$14,108.00",
@@ -232,6 +235,7 @@ export const FIELDS = {
     {
       id: "f_refund",
       section: "Refund",
+      is_calculated: true,
       label: "Amount Overpaid (Refund)",
       line: "35a",
       value: "$102.00",
@@ -401,6 +405,7 @@ export const STATE_CONFIG = {
   adjusted: { label: "Adjusted", color: "#4b5563", icon: "✎" },
   manual: { label: "Manual Entry", color: "#4b5563", icon: "✎" },
   ai_missing: { label: "Missing", color: "#dc2626", icon: "✕" }, // ponytail: added ai_missing state
+  stale: { label: "Stale", color: "#9ca3af", icon: "⟳" }, // ponytail: needs recomputation
 };
 
 export const RETURN_STATUS_CONFIG = {

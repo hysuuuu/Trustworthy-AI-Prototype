@@ -260,6 +260,7 @@ function renderFieldsPanel(rid) {
   const tbody = Object.entries(grouped)
     .map(([section, sFields]) => {
       const fieldRows = sFields
+        .sort((a, b) => (a.is_calculated ? 1 : 0) - (b.is_calculated ? 1 : 0))
         .map((f) => {
           const isSelected = sel === f.id;
           const isEditing = editing === f.id;
@@ -280,7 +281,7 @@ function renderFieldsPanel(rid) {
         <tr class="field-row${isSelected ? " selected" : ""}${f.state === "flagged" ? " flagged" : ""}"
             data-action="select-field" data-id="${f.id}">
           <td class="col-line mono text-3">${f.line}</td>
-          <td class="field-label">${f.label}</td>
+          <td class="field-label">${f.is_calculated ? '∑ ' : ''}${f.label}</td>
           <td class="col-value">${valueCell}</td>
           <td>${sourceCell}</td>
           <td class="col-conf">${doc ? confBar(f.confidence) : ""}</td>
@@ -307,15 +308,19 @@ function renderFieldsPanel(rid) {
     ["verified", "Verified"],
     ["adjusted", "Adjusted"],
     ["ai_missing", "Missing"],
+    ["stale", "Stale"],
   ].map(([val, label]) =>
     `<option value="${val}"${state.fieldFilter === val ? ' selected' : ''}>${label}</option>`
   ).join("");
+
+  const hasStale = allFields.some(f => f.state === "stale");
 
   return `
     <div class="panel fields-panel">
       <div class="panel-header">
         <span class="panel-title">Return Fields</span>
         <span class="panel-sub">${allFields.length} fields · ${flagged} flagged</span>
+        ${hasStale ? `<button class="btn-sm btn-primary" style="margin-left:auto" data-action="recompute">⟳ Re-compute</button>` : ''}
       </div>
       <div class="fields-toolbar">
         <div class="fields-search-wrap">
@@ -351,6 +356,25 @@ function renderDocPanel(rid) {
     : null;
   const emptyMsg =
     '<div class="doc-empty">Select a field with a source document</div>';
+
+  if (field?.is_calculated) {
+    return `<div class="panel doc-panel">
+      <div class="panel-header">
+        <span class="panel-title">Formula Breakdown</span>
+      </div>
+      <div class="doc-scroll">
+        <div class="doc-sheet">
+          <div class="doc-sheet-header">
+            <div class="doc-sheet-title">${field.label}</div>
+            <div class="doc-sheet-issuer">Calculated Total</div>
+          </div>
+          <div class="p14 text-2" style="font-size:14px; line-height:1.6">
+            ${field.transformation || "Formula not available."}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
 
   if (!field || !field.source_doc) {
     return `<div class="panel doc-panel">
@@ -629,8 +653,20 @@ document.getElementById("app").addEventListener("click", (e) => {
     if (f && newVal && newVal !== f.value) {
       f.value = newVal;
       f.state = "adjusted";
+      
+      // ponytail: mark dependent fields as stale
+      const allFields = getFields(state.returnId);
+      allFields.filter(field => field.is_calculated).forEach(field => {
+        field.state = "stale";
+      });
     }
     state.editingFieldId = null;
+  } else if (action === "recompute") {
+    // ponytail: fake recompute action
+    const allFields = getFields(state.returnId);
+    allFields.filter(field => field.state === "stale").forEach(field => {
+      field.state = "ai_suggested";
+    });
   } else if (action === "cancel-edit") {
     state.editingFieldId = null;
   } else if (action === "highlight-source") {
