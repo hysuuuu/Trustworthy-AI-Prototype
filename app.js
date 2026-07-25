@@ -264,9 +264,9 @@ function renderFieldsPanel(rid) {
           const isSelected = sel === f.id;
           const isEditing = editing === f.id;
 
-          const valueCell = isEditing
-            ? `<input class="inline-input" id="edit-input" value="${f.value}" />`
-            : `<span class="field-value mono">${f.value}</span>
+          const valueCell = state.editingFieldId === f.id
+            ? `<input class="inline-input" id="edit-input" value="${f.value || ''}" />`
+            : `<span class="field-value mono${f.state === 'ai_missing' ? ' text-3' : ''}">${f.value || 'Missing'}</span>
            ${f.state === "adjusted" ? `<span class="original-val mono">was ${f.original_ai_value}</span>` : ""}`;
 
           const doc = f.source_doc
@@ -306,6 +306,7 @@ function renderFieldsPanel(rid) {
     ["flagged", "Needs Review"],
     ["verified", "Verified"],
     ["adjusted", "Adjusted"],
+    ["ai_missing", "Missing"],
   ].map(([val, label]) =>
     `<option value="${val}"${state.fieldFilter === val ? ' selected' : ''}>${label}</option>`
   ).join("");
@@ -414,14 +415,20 @@ function renderInsightPanel(rid) {
 
   const insight = MOCK_AI_INSIGHTS[field.id];
 
+  // ponytail: Revert button added inline to minimum banner. YAGNI on undo toasts.
   const overrideBanner =
     field.state === "adjusted"
       ? `
     <div class="insight-override-banner">
-      <div class="override-label">Adjusted</div>
-      <div class="override-detail">
-        AI suggested: <span class="mono">${field.original_ai_value}</span><br>
-        Current value: <span class="mono">${field.value}</span>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start">
+        <div>
+          <div class="override-label">Adjusted</div>
+          <div class="override-detail">
+            AI suggested: <span class="mono">${field.original_ai_value}</span><br>
+            Current value: <span class="mono">${field.value}</span>
+          </div>
+        </div>
+        <button class="btn-sm btn-ghost" data-action="revert-field" data-id="${field.id}">↺ Revert</button>
       </div>
     </div>`
       : "";
@@ -608,6 +615,12 @@ document.getElementById("app").addEventListener("click", (e) => {
   } else if (action === "edit-field") {
     state.editingFieldId = id;
     state.selectedFieldId = id;
+  } else if (action === "revert-field") {
+    const f = getField(state.returnId, id);
+    if (f) {
+      f.value = f.original_ai_value;
+      f.state = "verified"; // ponytail: revert to verified, skip AI suggested step
+    }
   } else if (action === "save-field") {
     // read input value before re-render wipes the DOM
     const input = document.getElementById("edit-input");

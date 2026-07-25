@@ -159,13 +159,13 @@ export const FIELDS = {
       section: "Income",
       label: "Qualified Dividends",
       line: "3a",
-      value: "$2,940.00",
-      original_ai_value: "$2,940.00",
+      value: null,
+      original_ai_value: null,
       source_doc: "doc_1099div",
       source_page: 1,
       source_location: "Box 1b",
-      confidence: 0.93,
-      state: "ai_suggested",
+      confidence: 0,
+      state: "ai_missing",
       transformation: null,
     },
     {
@@ -400,6 +400,7 @@ export const STATE_CONFIG = {
   flagged: { label: "Needs Review", color: "#d97706", icon: "⚠" },
   adjusted: { label: "Adjusted", color: "#4b5563", icon: "✎" },
   manual: { label: "Manual Entry", color: "#4b5563", icon: "✎" },
+  ai_missing: { label: "Missing", color: "#dc2626", icon: "✕" }, // ponytail: added ai_missing state
 };
 
 export const RETURN_STATUS_CONFIG = {
