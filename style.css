@@ -8,7 +8,8 @@
 
 :root {
   --bg: #eef0f3;
-  --bg2: #cdded8;
+  --bg-2: #cdded8;
+  --bg-3: #b4c3bc;
   --surface: #ffffff;
   --surface-2: #f3f4f6;
   --border: #e5e7eb;
@@ -270,6 +271,27 @@ body {
   color: var(--text-3);
 }
 
+.btn-close {
+  margin-left: auto;
+  background: var(--bg-2);
+  border: none;
+  color: var(--text-3);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-close:hover {
+  background: var(--bg-3);
+  color: var(--text);
+}
+
 /* ── Fields panel ────────────────────────── */
 .fields-scroll {
   flex: 1;
@@ -289,7 +311,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-3);
-  background: var(--bg2);
+  background: var(--bg-2);
   border-bottom: 1px solid var(--border);
 }
 

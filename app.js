@@ -432,6 +432,7 @@ function renderInsightPanel(rid) {
       <div class="panel-header">
         <span class="panel-title">AI Analysis</span>
         ${badge(field)}
+        <button class="btn-close" data-action="close-panel" aria-label="Close panel">✕</button>
       </div>
       <div class="insight-scroll">
         ${overrideBanner}
@@ -484,10 +485,21 @@ function renderReview(rid) {
 
 function render() {
   const app = document.getElementById("app");
+  
+  // Capture scroll position before wiping DOM
+  const scrollContainer = document.querySelector(".fields-scroll");
+  const scrollTop = scrollContainer ? scrollContainer.scrollTop : 0;
+  
   app.innerHTML =
     state.view === "dashboard"
       ? renderDashboard()
       : renderReview(state.returnId);
+
+  // Restore scroll position
+  const newScrollContainer = document.querySelector(".fields-scroll");
+  if (newScrollContainer) {
+    newScrollContainer.scrollTop = scrollTop;
+  }
 
   if (state.editingFieldId) {
     const input = document.getElementById("edit-input");
@@ -521,6 +533,8 @@ document.getElementById("app").addEventListener("click", (e) => {
     if (state.editingFieldId) return; // lock during edit
     // toggle: clicking the active row deselects and collapses side panels
     state.selectedFieldId = state.selectedFieldId === id ? null : id;
+  } else if (action === 'close-panel') {
+    state.selectedFieldId = null;
   } else if (action === "accept-field") {
     const f = getField(state.returnId, id);
     if (f) f.state = "verified";
