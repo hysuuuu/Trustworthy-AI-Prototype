@@ -540,7 +540,7 @@ function renderInsightPanel(rid) {
                   ? `<button class="btn-action btn-accept" data-action="accept-field" data-id="${field.id}">✓ Accept</button>`
                   : ""
               }
-             <button class="btn-action btn-ghost" data-action="edit-field" data-id="${field.id}">✎ Edit value</button>`
+             ${field.is_calculated ? "" : `<button class="btn-action btn-ghost" data-action="edit-field" data-id="${field.id}">✎ Edit value</button>`}`
         }
       </div>
     </div>`;
