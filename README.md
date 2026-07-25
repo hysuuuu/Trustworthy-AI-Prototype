@@ -10,7 +10,7 @@
 
 ### 1. What the AI did
 
-Every field shows a **"What the AI did"** section in the AI Analysis panel. It describes the extraction action in plain language, like "Extracted wages directly from Box 1 of the W-2 issued by Acme Corp." The AI's state is also displayed as a badge on the field row: `AI Suggested`, `Verified`, `Needs Review`, or `Manually Changed`.
+Every field shows a **"What the AI did"** section in the AI Analysis panel. It describes the extraction action in plain language, like "Extracted wages directly from Box 1 of the W-2 issued by Acme Corp." The AI's state is also displayed as a badge on the field row: `AI Suggested`, `Verified`, `Needs Review`, or `Adjusted`.
 
 ### 2. Why it made a recommendation
 
@@ -31,11 +31,11 @@ The insight panel includes a persistent action footer pinned to the bottom:
 - **✓ Accept**: A prominent green button that marks the field Verified.
 - **✎ Edit value**: Opens an inline editor directly in the field row.
 
-Once a field is Verified or Manually Changed, the Accept button disappears to prevent redundant actions.
+Once a field is Verified or Adjusted, the Accept button disappears to prevent redundant actions.
 
 ### 6. How to correct the AI without breaking the workflow
 
-When a CPA edits a value, the field state changes to **Manually Changed**. The original AI value is preserved and shown struck through beneath the new value (e.g., `was $4,810.00`). The AI's original reasoning, confidence score, and evidence remain intact in the insight panel, now preceded by a **"Manually Override"** banner that displays both values. The audit trail is maintained so reviewers can always see what the AI recommended versus what the human decided, and why.
+When a CPA edits a value, the field state changes to **Adjusted**. The original AI value is preserved and shown struck through beneath the new value (e.g., `was $4,810.00`). The AI's original reasoning, confidence score, and evidence remain intact in the insight panel, now preceded by an **"Adjusted"** banner that displays both values. The audit trail is maintained so reviewers can always see what the AI recommended versus what the human decided, and why.
 
 ## What's Genuinely Wired vs. Simulated
 

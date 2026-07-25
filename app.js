@@ -228,7 +228,7 @@ function renderFieldsPanel(rid) {
           const valueCell = isEditing
             ? `<input class="inline-input" id="edit-input" value="${f.value}" />`
             : `<span class="field-value mono">${f.value}</span>
-           ${f.state === "manually_changed" ? `<span class="original-val mono">was ${f.original_ai_value}</span>` : ""}`;
+           ${f.state === "adjusted" ? `<span class="original-val mono">was ${f.original_ai_value}</span>` : ""}`;
 
           const doc = f.source_doc
             ? SOURCE_DOCS[rid]?.find((d) => d.id === f.source_doc)
@@ -238,17 +238,17 @@ function renderFieldsPanel(rid) {
             : `<span class="text-3">${f.source_location}</span>`;
 
           return `
-        <tr class="field-row${isSelected ? ' selected' : ''}${f.state === 'flagged' ? ' flagged' : ''}"
+        <tr class="field-row${isSelected ? " selected" : ""}${f.state === "flagged" ? " flagged" : ""}"
             data-action="select-field" data-id="${f.id}">
           <td class="col-line mono text-3">${f.line}</td>
           <td class="field-label">${f.label}</td>
           <td class="col-value">${valueCell}</td>
           <td>${sourceCell}</td>
-          <td class="col-conf">${doc ? confBar(f.confidence) : ''}</td>
+          <td class="col-conf">${doc ? confBar(f.confidence) : ""}</td>
           <td>${badge(f)}</td>
         </tr>`;
         })
-        .join('');
+        .join("");
 
       return `<tbody>
       <tr class="section-row"><td colspan="6">${section}</td></tr>
@@ -354,10 +354,10 @@ function renderInsightPanel(rid) {
   const insight = MOCK_AI_INSIGHTS[field.id];
 
   const overrideBanner =
-    field.state === "manually_changed"
+    field.state === "adjusted"
       ? `
     <div class="insight-override-banner">
-      <div class="override-label">Manually Override</div>
+      <div class="override-label">Adjusted</div>
       <div class="override-detail">
         AI suggested: <span class="mono">${field.original_ai_value}</span><br>
         Current value: <span class="mono">${field.value}</span>
@@ -377,11 +377,14 @@ function renderInsightPanel(rid) {
   const insightBody = insight
     ? `
     <div class="insight-section">
-      <div class="insight-section-label">What the AI did</div>
       <div class="insight-text">${insight.summary}</div>
+      <div class="insight-evidence-chip" data-action="highlight-source" title="View in Source Document">
+        <div class="evidence-chip-label">Source</div>
+        <div class="evidence-chip-text">${insight.evidence}</div>
+      </div>
     </div>
     <div class="insight-section">
-      <div class="insight-section-label">Confidence</div>
+      <div class="insight-section-label">AI Extract Confidence</div>
       <div class="confidence-large">
         <div class="confidence-bar-bg large" style="flex:1">
           <div class="confidence-bar-fill" style="width:${pct(insight.confidence)};background:${confColor(insight.confidence)}"></div>
@@ -389,10 +392,6 @@ function renderInsightPanel(rid) {
         <span class="confidence-num-large" style="color:${confColor(insight.confidence)}">${pct(insight.confidence)}</span>
       </div>
     </div>
-    <div class="insight-section">
-      <div class="insight-section-label">Evidence</div>
-      <div class="insight-text">${insight.evidence}</div>
-    </div>    
     ${
       insight.uncertainty
         ? `
@@ -440,11 +439,15 @@ function renderInsightPanel(rid) {
         ${insightBody}
       </div>
       <div class="insight-actions">
-        ${state.editingFieldId === field.id
-          ? `<button class="btn-action btn-primary" data-action="save-field" data-id="${field.id}">Save changes</button>
+        ${
+          state.editingFieldId === field.id
+            ? `<button class="btn-action btn-primary" data-action="save-field" data-id="${field.id}">Save changes</button>
              <button class="btn-action btn-ghost" data-action="cancel-edit">Cancel</button>`
-          : `${!['verified', 'manually_changed'].includes(field.state)
-              ? `<button class="btn-action btn-accept" data-action="accept-field" data-id="${field.id}">✓ Accept</button>` : ''}
+            : `${
+                !["verified", "adjusted"].includes(field.state)
+                  ? `<button class="btn-action btn-accept" data-action="accept-field" data-id="${field.id}">✓ Accept</button>`
+                  : ""
+              }
              <button class="btn-action btn-ghost" data-action="edit-field" data-id="${field.id}">✎ Edit value</button>`
         }
       </div>
@@ -470,14 +473,14 @@ function renderReview(rid) {
         <span class="review-client-name">${ret.client}</span>
         <span class="text-3">·</span>
         <span class="text-2">${ret.tax_year} · ${ret.filing_status}</span>
-        <span class="badge" style="color:${sc.color};border-color:${alpha(sc.color, '28')};background:${alpha(sc.color, '12')}">${sc.label}</span>
+        <span class="badge" style="color:${sc.color};border-color:${alpha(sc.color, "28")};background:${alpha(sc.color, "12")}">${sc.label}</span>
       </div>
       <div class="review-meta">Preparer: ${ret.preparer} · Due ${ret.due_date}</div>
     </div>
-    <div class="review-grid ${hasSel ? 'has-selection' : ''}">
+    <div class="review-grid ${hasSel ? "has-selection" : ""}">
       ${renderFieldsPanel(rid)}
-      ${hasSel ? renderDocPanel(rid) : ''}
-      ${hasSel ? renderInsightPanel(rid) : ''}
+      ${hasSel ? renderDocPanel(rid) : ""}
+      ${hasSel ? renderInsightPanel(rid) : ""}
     </div>`;
 }
 
@@ -485,11 +488,11 @@ function renderReview(rid) {
 
 function render() {
   const app = document.getElementById("app");
-  
+
   // Capture scroll position before wiping DOM
   const scrollContainer = document.querySelector(".fields-scroll");
   const scrollTop = scrollContainer ? scrollContainer.scrollTop : 0;
-  
+
   app.innerHTML =
     state.view === "dashboard"
       ? renderDashboard()
@@ -529,11 +532,11 @@ document.getElementById("app").addEventListener("click", (e) => {
     state.returnId = null;
     state.selectedFieldId = null;
     state.editingFieldId = null;
-  } else if (action === 'select-field') {
+  } else if (action === "select-field") {
     if (state.editingFieldId) return; // lock during edit
     // toggle: clicking the active row deselects and collapses side panels
     state.selectedFieldId = state.selectedFieldId === id ? null : id;
-  } else if (action === 'close-panel') {
+  } else if (action === "close-panel") {
     state.selectedFieldId = null;
   } else if (action === "accept-field") {
     const f = getField(state.returnId, id);
@@ -549,11 +552,20 @@ document.getElementById("app").addEventListener("click", (e) => {
     const f = getField(state.returnId, id);
     if (f && newVal && newVal !== f.value) {
       f.value = newVal;
-      f.state = "manually_changed";
+      f.state = "adjusted";
     }
     state.editingFieldId = null;
   } else if (action === "cancel-edit") {
     state.editingFieldId = null;
+  } else if (action === "highlight-source") {
+    const docRow = document.querySelector(".doc-row-highlight");
+    if (docRow) {
+      docRow.scrollIntoView({ behavior: "smooth", block: "center" });
+      docRow.classList.remove("flash-highlight");
+      void docRow.offsetWidth; // trigger reflow
+      docRow.classList.add("flash-highlight");
+    }
+    return; // skip re-render
   }
 
   render();

@@ -93,7 +93,7 @@ export const SOURCE_DOCS = {
 };
 
 // Return fields — the core dataset
-// states: "ai_suggested" | "verified" | "flagged" | "manually_changed"
+// states: "ai_suggested" | "verified" | "flagged" | "adjusted"
 export const FIELDS = {
   r1: [
     {
@@ -151,7 +151,7 @@ export const FIELDS = {
       source_page: 1,
       source_location: "Box 1a",
       confidence: 0.93,
-      state: "manually_changed",
+      state: "adjusted",
       transformation: null,
     },
     {
@@ -387,16 +387,24 @@ export const BOUNDING_BOXES = {
 // Status display config — maps state keys to UI labels and colors
 // ponytail: hex values (not CSS vars) so they work in JS inline style strings
 export const STATE_CONFIG = {
-  ai_suggested:    { label: 'AI Suggested',      color: '#2563eb', icon: '✦' }, /* Blue to separate from verified */
-  verified:        { label: 'Verified',           color: '#059669', icon: '✓' }, /* GreenGrowth brand green */
-  flagged:         { label: 'Needs Review',       color: '#d97706', icon: '⚠' },
-  manually_changed:{ label: 'Manually Changed',  color: '#4b5563', icon: '✎' },
-  manual:          { label: 'Manual Entry',       color: '#4b5563', icon: '✎' },
+  ai_suggested: {
+    label: "AI Suggested",
+    color: "#2563eb",
+    icon: "✦",
+  } /* Blue to separate from verified */,
+  verified: {
+    label: "Verified",
+    color: "#059669",
+    icon: "✓",
+  } /* GreenGrowth brand green */,
+  flagged: { label: "Needs Review", color: "#d97706", icon: "⚠" },
+  adjusted: { label: "Adjusted", color: "#4b5563", icon: "✎" },
+  manual: { label: "Manual Entry", color: "#4b5563", icon: "✎" },
 };
 
 export const RETURN_STATUS_CONFIG = {
-  ai_review:      { label: 'AI Review',      color: '#2563eb' },
-  in_progress:    { label: 'In Progress',    color: '#d97706' },
-  complete:       { label: 'Complete',       color: '#059669' },
-  pending_client: { label: 'Pending Client', color: '#4b5563' },
+  ai_review: { label: "AI Review", color: "#2563eb" },
+  in_progress: { label: "In Progress", color: "#d97706" },
+  complete: { label: "Complete", color: "#059669" },
+  pending_client: { label: "Pending Client", color: "#4b5563" },
 };

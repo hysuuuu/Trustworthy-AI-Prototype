@@ -551,6 +551,16 @@ body {
   padding-left: 11px;
 }
 
+@keyframes flashRow {
+  0% { background: #fef9ec; }
+  50% { background: #ffe4a0; }
+  100% { background: #fef9ec; }
+}
+
+.flash-highlight {
+  animation: flashRow 0.8s ease;
+}
+
 .doc-box-label {
   font-size: 13px;
   font-weight: 600;
@@ -605,6 +615,37 @@ body {
 .insight-text {
   font-size: 15px;
   line-height: 1.6;
+  color: var(--text-2);
+}
+
+.insight-evidence-chip {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.insight-evidence-chip:hover {
+  background: var(--bg-3, #f8f9fa);
+  border-color: var(--text-3);
+}
+
+.evidence-chip-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+}
+
+.evidence-chip-text {
+  font-size: 13px;
+  line-height: 1.5;
   color: var(--text-2);
 }
 .insight-action {
