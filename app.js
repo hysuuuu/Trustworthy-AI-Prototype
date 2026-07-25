@@ -155,6 +155,8 @@ function confBar(c, large = false) {
 function renderDashboard() {
   const totFlags = RETURNS.reduce((n, r) => n + r.flags, 0);
   const totReview = RETURNS.reduce((n, r) => n + r.awaiting_review, 0);
+  const totComplete = RETURNS.filter((r) => r.status === "complete").length;
+  const totInProgress = RETURNS.filter((r) => r.status === "in_progress" || r.status === "ai_review").length;
 
   const rows = RETURNS.map((r) => {
     const sc = RETURN_STATUS_CONFIG[r.status];
@@ -164,7 +166,7 @@ function renderDashboard() {
         : `<span class="text-3">—</span>`;
     const reviewCell =
       r.awaiting_review > 0
-        ? r.awaiting_review
+        ? `<span class="review-count">${r.awaiting_review}</span>`
         : `<span class="text-3">—</span>`;
     return `
       <tr class="return-row" data-action="open-return" data-id="${r.id}">
@@ -174,44 +176,70 @@ function renderDashboard() {
         <td>${flagCell}</td>
         <td>${reviewCell}</td>
         <td class="text-2">${r.preparer}</td>
-        <td class="text-2 mono">${r.due_date}</td>
+        <td class="text-3 mono">${r.due_date}</td>
       </tr>`;
   }).join("");
 
   return `
     <header class="header">
       <div class="header-brand">GreenGrowth CPAs</div>
+      <nav class="header-nav">
+        <span class="header-nav-item active">Returns</span>
+        <span class="header-nav-item">Clients</span>
+        <span class="header-nav-item">Reports</span>
+      </nav>
       <div class="header-user">Michael Chen</div>
     </header>
     <main class="dashboard">
-      <div class="dashboard-title">
-        <h1>Returns</h1>
-        <div class="stats-row">
-          <span><strong>${RETURNS.length}</strong> returns</span>
-          <span class="stat-sep">·</span>
-          <span><strong>${totFlags}</strong> flags</span>
-          <span class="stat-sep">·</span>
-          <span><strong>${totReview}</strong> awaiting review</span>
+      <div class="dashboard-header">
+        <div>
+          <h1>Returns</h1>
+          <p class="dashboard-sub">Tax year 2024 · ${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
         </div>
       </div>
-      <table class="returns-table">
-        <thead>
-          <tr>
-            <th>Client</th>
-            <th>Filing Status</th>
-            <th>Status</th>
-            <th>Flags</th>
-            <th>Awaiting Review</th>
-            <th>Preparer</th>
-            <th>Due</th>
-          </tr>
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-card-label">Total Returns</div>
+          <div class="stat-card-value">${RETURNS.length}</div>
+        </div>
+        <div class="stat-card stat-card--warn">
+          <div class="stat-card-label">Needs Review</div>
+          <div class="stat-card-value">${totInProgress}</div>
+        </div>
+        <div class="stat-card stat-card--danger">
+          <div class="stat-card-label">Open Flags</div>
+          <div class="stat-card-value">${totFlags}</div>
+        </div>
+        <div class="stat-card stat-card--success">
+          <div class="stat-card-label">Complete</div>
+          <div class="stat-card-value">${totComplete}</div>
+        </div>
+      </div>
+      <div class="table-shell">
+        <div class="table-shell-header">
+          <span class="table-shell-title">All Returns</span>
+          <span class="table-shell-count">${RETURNS.length} entries</span>
+        </div>
+        <table class="returns-table">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Filing Status</th>
+              <th>Status</th>
+              <th>Flags</th>
+              <th>Awaiting Review</th>
+              <th>Preparer</th>
+              <th>Due</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
     </main>`;
 }
 
 // ── Fields panel ──────────────────────────────────────────────────────────
+
 
 function renderFieldsPanel(rid) {
   const allFields = getFields(rid);
