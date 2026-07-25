@@ -297,14 +297,14 @@ export const MOCK_AI_INSIGHTS = {
   },
   f_qual_dividends: {
     summary:
-      "Qualified dividends extracted from Box 1b of the Fidelity 1099-DIV.",
+      "Could not extract qualified dividends from Box 1b.",
     evidence:
-      "1099-DIV · Box 1b — $2,940.00. Qualified dividends are a subset of ordinary dividends.",
-    confidence: 0.93,
-    uncertainty: null,
+      "1099-DIV · Box 1b — field is obscured or blank.",
+    confidence: 0,
+    uncertainty: "Value is missing. Cannot assume $0.00 automatically.",
     suggested_action:
-      "Accept — consistent with Box 1a. Qualified amount does not exceed ordinary.",
-    correction_hint: null,
+      "Manual Entry Required — please verify with the physical document or client.",
+    correction_hint: "Enter the value manually if it is present, or $0.00 if explicitly blank.",
   },
   f_cap_gains: {
     summary:
