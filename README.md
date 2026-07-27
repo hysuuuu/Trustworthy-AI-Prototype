@@ -1,4 +1,4 @@
-# GreenGrowth CPAs: Trustworthy AI
+# Trustworthy AI
 
 ## Workflow
 
